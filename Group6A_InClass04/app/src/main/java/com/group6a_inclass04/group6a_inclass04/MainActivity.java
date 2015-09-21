@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -25,13 +26,22 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     static ArrayList<String> id = new ArrayList<String>();
+    static int fPicId = -1;
+    static ImageView fPicView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        fPicView = (ImageView) findViewById(R.id.imageViewMainImg);
+
         if(connectedOnline()){
             new GetList().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php");
+
+            fPicId = 0;
+
+            getPhoto(fPicId);
         }
         else Toast.makeText(MainActivity.this, "Internet Not Connected", Toast.LENGTH_SHORT).show();
 
@@ -94,11 +104,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             else{
+
                 for(String photoId:idList){
                     id.add(photoId);
 
                     Log.d("Phot_ID",photoId);
                 }
+
+
             }
         }
     }
@@ -123,5 +136,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getPhoto(int id){
+
     }
 }
