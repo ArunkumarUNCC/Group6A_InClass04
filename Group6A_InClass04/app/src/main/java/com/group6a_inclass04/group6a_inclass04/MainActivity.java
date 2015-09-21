@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         if(connectedOnline()){
             new GetList().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php");
         }
+        else Toast.makeText(MainActivity.this, "Internet Not Connected", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -77,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<String> idList) {
             super.onPostExecute(idList);
+
+            if(idList.isEmpty())
+                Toast.makeText(MainActivity.this,"No IDS",Toast.LENGTH_SHORT).show();
 
             for(String photoId:idList){
                 id.add(photoId);
