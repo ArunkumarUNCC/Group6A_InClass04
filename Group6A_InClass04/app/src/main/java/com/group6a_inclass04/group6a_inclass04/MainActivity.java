@@ -49,18 +49,18 @@ public class MainActivity extends AppCompatActivity {
 
     private class GetList extends AsyncTask<String,Void,ArrayList<String>>{
         protected BufferedReader reader=null;
+        ArrayList<String> idList = new ArrayList<String>();
 
         @Override
         protected ArrayList<String> doInBackground(String... params) {
-            URL url = null;
+            //URL url = null;
             try {
-                url = new URL(params[0]);
+                URL url = new URL(params[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                ArrayList<String> idList = new ArrayList<String>();
                 String line = "";
 
                 while((line = reader.readLine()) != null){
@@ -71,22 +71,34 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally{
+                try {
+                    if (reader != null)
+                        reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
-            return null;
+            return idList;
+            //return null;
         }
 
         @Override
         protected void onPostExecute(ArrayList<String> idList) {
             super.onPostExecute(idList);
 
-            if(idList.isEmpty())
-                Toast.makeText(MainActivity.this,"No IDS",Toast.LENGTH_SHORT).show();
+            if(idList.isEmpty()) {
+                Toast.makeText(MainActivity.this, "No IDS", Toast.LENGTH_SHORT).show();
+                Log.d("Phot_ID", "No IDS");
+            }
 
-            for(String photoId:idList){
-                id.add(photoId);
+            else{
+                for(String photoId:idList){
+                    id.add(photoId);
 
-                Log.d("Phot_ID",photoId);
+                    Log.d("Phot_ID",photoId);
+                }
             }
         }
     }
