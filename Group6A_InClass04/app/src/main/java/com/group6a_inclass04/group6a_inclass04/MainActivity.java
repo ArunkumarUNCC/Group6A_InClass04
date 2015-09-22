@@ -39,12 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
         if(connectedOnline()){
             new GetList().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php");
+            //Log.d("Phot_ID", id.get(0));
 
             fPicId = 0;
 
-            String lPicId = getPhoto(fPicId);
+            //String lPicId = getPhoto(fPicId);
 
-            new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+lPicId);
+            //new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+id.get(0));
         }
         else Toast.makeText(MainActivity.this, "Internet Not Connected", Toast.LENGTH_SHORT).show();
 
@@ -112,9 +113,10 @@ public class MainActivity extends AppCompatActivity {
                 for(String photoId:idList){
                     id.add(photoId);
 
-                    Log.d("Phot_ID",photoId);
+                    //Log.d("Phot_ID", id.get(0));
                 }
-
+                //ImageView viewImage = (ImageView) findViewById(R.id.imageViewMainImg);
+                new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+id.get(0));
 
             }
         }
@@ -161,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(image);
 
             if(image!=null) {
-                fPicView.setImageBitmap(image);
+                ImageView viewImage = (ImageView) findViewById(R.id.imageViewMainImg);
+                viewImage.setImageBitmap(image);
 //                Toast.makeText(MainActivity.this, "No IDS", Toast.LENGTH_SHORT).show();
 //                Log.d("Phot_ID", "No IDS");
             }
