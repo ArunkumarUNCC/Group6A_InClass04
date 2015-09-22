@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/imageViewMainImg"
-        android:src="@android:drawable/btn_star_big_on"
+
         android:layout_above="@+id/imageViewPrevious"
         android:layout_alignParentTop="true" />
 

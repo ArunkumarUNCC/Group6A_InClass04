@@ -1,5 +1,11 @@
+/*
+  In Class Assignment 4
+* Name: Arunkumar Bagavathi - Michael Vitulli
+* */
+
 package com.group6a_inclass04.group6a_inclass04;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -20,7 +27,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -30,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     static int fPicId = -1;
     static ImageView fPicView;
 
+    ProgressDialog progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,17 +45,50 @@ public class MainActivity extends AppCompatActivity {
 
         fPicView = (ImageView) findViewById(R.id.imageViewMainImg);
 
+        findViewById(R.id.imageViewNext).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fPicId++;
+
+                if (fPicId > id.size()-1)
+                    fPicId = 0;
+
+                if(connectedOnline()) {
+                    if(id.isEmpty())
+                        new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php");
+                    else
+                        new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid=" + id.get(fPicId));
+                }
+
+            }
+        });
+
+        findViewById(R.id.imageViewPrevious).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fPicId--;
+
+                if (fPicId < 0)
+                    fPicId = id.size()-1;
+
+                if(connectedOnline()) {
+                    if(id.isEmpty())
+                        new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php");
+                    else
+                        new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid=" + id.get(fPicId));
+                }
+
+            }
+        });
+
         if(connectedOnline()){
             new GetList().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php");
             //Log.d("Phot_ID", id.get(0));
 
             fPicId = 0;
 
-            //String lPicId = getPhoto(fPicId);
-
-            //new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+id.get(0));
         }
-        else Toast.makeText(MainActivity.this, "Internet Not Connected", Toast.LENGTH_SHORT).show();
+
 
     }
 
@@ -58,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
         if(info!=null && info.isConnected()){
             return true;
         }
-        else return false;
+        else{
+            Toast.makeText(MainActivity.this, "Internet Not Connected", Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 
     //To get List of IDS
@@ -68,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<String> doInBackground(String... params) {
-            //URL url = null;
+
             try {
                 URL url = new URL(params[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -113,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
                 for(String photoId:idList){
                     id.add(photoId);
 
-                    //Log.d("Phot_ID", id.get(0));
                 }
-                //ImageView viewImage = (ImageView) findViewById(R.id.imageViewMainImg);
-                new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+id.get(0));
+
+                fPicId = 0;
+                new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+id.get(fPicId));
 
             }
         }
@@ -128,9 +172,23 @@ public class MainActivity extends AppCompatActivity {
         protected InputStream in = null;
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progress = new ProgressDialog(MainActivity.this);
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setMax(100);
+            progress.setCancelable(false);
+            progress.setMessage("Loading...");
+            progress.show();
+        }
+
+
+        @Override
         protected Bitmap doInBackground(String... params) {
-            //URL url = null;
+
             try {
+
                 URL url = new URL(params[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -154,19 +212,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            //return idList;
+
             return null;
         }
 
         @Override
         protected void onPostExecute(Bitmap image) {
             super.onPostExecute(image);
+            progress.dismiss();
 
             if(image!=null) {
                 ImageView viewImage = (ImageView) findViewById(R.id.imageViewMainImg);
                 viewImage.setImageBitmap(image);
-//                Toast.makeText(MainActivity.this, "No IDS", Toast.LENGTH_SHORT).show();
-//                Log.d("Phot_ID", "No IDS");
+
             }
 
             else{
