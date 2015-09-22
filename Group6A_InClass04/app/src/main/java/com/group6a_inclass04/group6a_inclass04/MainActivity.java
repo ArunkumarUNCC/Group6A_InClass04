@@ -2,6 +2,7 @@ package com.group6a_inclass04.group6a_inclass04;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -41,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
             fPicId = 0;
 
-            getPhoto(fPicId);
+            String lPicId = getPhoto(fPicId);
+
+            new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+lPicId);
         }
         else Toast.makeText(MainActivity.this, "Internet Not Connected", Toast.LENGTH_SHORT).show();
 
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         else return false;
     }
 
+    //To get List of IDS
     private class GetList extends AsyncTask<String,Void,ArrayList<String>>{
         protected BufferedReader reader=null;
         ArrayList<String> idList = new ArrayList<String>();
@@ -116,6 +120,61 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    //To get List of Image
+    private class GetImage extends AsyncTask<String,Void,Bitmap>{
+        protected InputStream in = null;
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            //URL url = null;
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                in = connection.getInputStream();
+                Bitmap image = BitmapFactory.decodeStream(in);
+
+                return image;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            //return idList;
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap image) {
+            super.onPostExecute(image);
+
+            if(image!=null) {
+                fPicView.setImageBitmap(image);
+//                Toast.makeText(MainActivity.this, "No IDS", Toast.LENGTH_SHORT).show();
+//                Log.d("Phot_ID", "No IDS");
+            }
+
+            else{
+
+                Toast.makeText(MainActivity.this, "No Image", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -138,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getPhoto(int id){
-
+    private String getPhoto(int picId){
+        return id.get(picId);
     }
 }
