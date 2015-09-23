@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     static ArrayList<String> id = new ArrayList<String>();
     static int fPicId = -1;
+    static final int fTOAST_LENTH = Toast.LENGTH_LONG;
     static ImageView fPicView;
 
     ProgressDialog progress;
@@ -87,7 +88,12 @@ public class MainActivity extends AppCompatActivity {
 
             fPicId = 0;
 
+
+            String lPicId = getPhoto(fPicId);
+
+            new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid=" + lPicId);
         }
+        else Toast.makeText(MainActivity.this, "Internet Not Connected", fTOAST_LENTH).show();
 
 
     }
@@ -100,7 +106,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         else{
+
             Toast.makeText(MainActivity.this, "Internet Not Connected", Toast.LENGTH_SHORT).show();
+
             return false;
         }
     }
@@ -148,19 +156,18 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(idList);
 
             if(idList.isEmpty()) {
-                Toast.makeText(MainActivity.this, "No IDS", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "No IDS", fTOAST_LENTH).show();
                 Log.d("Phot_ID", "No IDS");
-            }
-
-            else{
-
+            }else{
                 for(String photoId:idList){
                     id.add(photoId);
 
                 }
 
+
                 fPicId = 0;
                 new GetImage().execute("http://dev.theappsdr.com/lectures/inclass_photos/index.php?pid="+id.get(fPicId));
+
 
             }
         }
@@ -208,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
 
@@ -229,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
 
             else{
 
-                Toast.makeText(MainActivity.this, "No Image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "No Image", fTOAST_LENTH).show();
 
             }
         }
@@ -260,5 +266,17 @@ public class MainActivity extends AppCompatActivity {
 
     private String getPhoto(int picId){
         return id.get(picId);
+    }
+
+    public void nextOnClick (View aView){
+        if(connectedOnline()){
+
+        }
+    }
+
+    public void previousOnClick (View aView){
+        if(connectedOnline()){
+
+        }
     }
 }

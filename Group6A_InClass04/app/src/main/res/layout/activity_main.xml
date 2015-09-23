@@ -11,7 +11,8 @@
         android:id="@+id/imageViewMainImg"
 
         android:layout_above="@+id/imageViewPrevious"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:clickable="false" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -20,7 +21,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:src="@drawable/ic_action_previous_item" />
+        android:src="@drawable/ic_action_previous_item"
+        android:clickable="true"
+        android:onClick="@string/previousOnClick" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -29,6 +32,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_action_next_item" />
+        android:src="@drawable/ic_action_next_item"
+        android:clickable="true"
+        android:onClick="@string/nextOnClick" />
 
 </RelativeLayout>
